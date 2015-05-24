@@ -1,9 +1,3 @@
----
-title: "Practical ML Course Project"
-author: "Thao Tran"
-date: "21 May 2015"
-output: html_document
----
 
 This repository holds my course project for the Practical Machine Learning course on Coursera.
 
