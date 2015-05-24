@@ -7,7 +7,7 @@ output: html_document
 
 This repository holds my course project for the Practical Machine Learning course on Coursera.
 
-Instead of an HTML file, I have produced a pdf file.  Please see "[courseProject.pdf]<https://github.com/HHest/PracticalMLProject/blob/master/courseProject.pdf>" for my submission. The pdf was compiled from the R markdown file "courseProject.Rmd". 
+Instead of an HTML file, I have produced a pdf file.  Please see <https://github.com/HHest/PracticalMLProject/blob/master/courseProject.pdf> for my submission. The pdf was compiled from the R markdown file "courseProject.Rmd". 
 
 Thank you.
 
