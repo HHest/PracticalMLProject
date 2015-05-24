@@ -30,11 +30,24 @@ This tallied up to: $13$ parameter types $\times$ $4$ sensor groups $= 52$ param
 I used the "caret" framework in R to conduct the machine learning process. Part of this process is the selection of a machine learning algorithm. "Caret" supports many strategies, but because of limited computer resources, I could only use methods that were quick and undemanding. In the end, I studied four models: 
 
 1. The Classification and Regression Tree (CART) model using recursive partitioning method ("rpart" on caret).
-1. The linear discriminant analysis (model based prediction) method ("lda" on caret).
-1. The quadratic discriminant analysis (model based prediction) method ("qda" on caret).
+1. The linear discriminant analysis (parametric model) method ("lda" on caret).
+1. The quadratic discriminant analysis method ("qda" on caret).
 1. And the robust quadratic discriminant analysis method ("QdaCov" on caret).
 
-Other methods, such as Naive Bayes ("nb"), bagging ("bagEarth"), Boost ("gbm"), were impossible to run on my computer.
+Other methods, such as Naive Bayes ("nb"), bagging ("bagEarth"), Boost ("gbm"), were impossible to run on my computer because it lacked enough memory.
+
+The discriminant analysis methods were especially appealing to me because being parametric model based, they do not take up so much memory, only cpu. Even then, the computations were not intensive. 
+
+Also, these methods assume the predictors follow a Gaussian distribution. Luckily, the assumption works fairly well with the predictors in this Weight Lifting Exercise data set. (See Figure 1.)
+
+```{r, echo=FALSE, message=FALSE, fig.align='center', fig.height=7, fig.width=7}
+library(caret)
+training <- read.csv("./data/pml-training.csv")
+vars <- c("accel_belt_x","accel_belt_y","accel_belt_z")
+featurePlot(x=training[,vars], y=training$classe, plot="pairs", 
+            auto.key=list(space="right"), alpha=.2, 
+            main="Fig 1: Distribution of Sample Predictors")
+```
 
 # Training & Cross Validation
 
@@ -48,25 +61,28 @@ One can use these "Accuracy" numbers to compare the performance of the models to
 
 # Result
 
-From the four methods in the study, the quadratic discriminant analysis ("qda") did much better than the other three methods (see Figure 1). 
+From the four methods in the study, the quadratic discriminant analysis ("qda") did much better than the other three methods. (See Figure 2.) Surprisingly, in this study the robust qda method "QdaCov" performed worse than "qda", and even "lda".
 
 The "qda" method gave an accuracy of $89.3\%$. A prediction using this method should be $\approx 90\%$ accurate. In other words, the expected out of sample error is roughly $10\%$ with this method.
 
-In fact, with the "pml-testing.csv" set, the accuracy was $95\%$.
+In fact, with the "pml-testing.csv" set, the accuracy was $95\%$.  
 
-```{r, echo=FALSE, message=FALSE}
-errors[errors$nFeature==52,]
-```
-
-NB: the "rpart" method reported three Accuracy numbers from its recursive run. The best number should be used as the final result. Also, disappointingly in this study the robust qda method "QdaCov" performed worse than "qda", and even "lda".
+_
 
 ```{r, echo=FALSE, message=FALSE}
 library(ggplot2)
 errors <- read.csv("./errors.csv")
 g <- ( ggplot(errors[errors$nFeature==52,], aes(Method, Accuracy)) 
        + geom_point(size=5)
-       + ggtitle("Fig 1: Expected Out of Sample Error\n(based on cross validation analysis)")); g
+       + ggtitle("Fig 2: Expected Out of Sample Error\n(based on k-fold cross validation analysis)")); g
 ```
+
+```{r, echo=FALSE, message=FALSE}
+errors[errors$nFeature==52,]
+```
+
+(NB: the "rpart" method reported three Accuracy numbers from its recursive run. The best number should be used as the final result.) 
+
 
 \newpage
 
