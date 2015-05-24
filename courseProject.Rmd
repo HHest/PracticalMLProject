@@ -82,7 +82,7 @@ registerDoMC(cores=3)
 ```
 ```{r, eval=FALSE}
 training <- read.csv("./data/pml-training.csv")
-#cv <- read.csv("./data/my-test.csv")
+testing <- read.csv("./data/pml-testing.csv")
 
 # features selection...
 fullColNames <- names(training)
@@ -112,7 +112,8 @@ doFit <- function(tDf, tFormula, method) {
         #confusionMatrix info
         ans <- predict(fit, newdata=tDf)
         confMat <- confusionMatrix(ans, tDf$classe)
-        print(paste("fit:", fit$result["Accuracy"], "confMat:", confMat$overall["Accuracy"]))
+        print(paste("fit:", fit$result["Accuracy"], 
+                    "confMat:", confMat$overall["Accuracy"]))
     }    
     return (fit)
 }
@@ -122,8 +123,8 @@ keepErrStats <- function(errors, fit) {
         errors <- unique( 
             bind_rows( errors, data.frame(
                 Method=fit$method, 
-#                nFeature=length(fit$finalModel$xNames), 
-                nFeature=52, 
+                # need to hack for QdaCov
+                nFeature=ifelse(fit$method=="QdaCov", 52, length(fit$finalModel$xNames)),
                 Accuracy=fit$result["Accuracy"]) ) )
     } else {
     	errors <- data.frame(
@@ -144,6 +145,15 @@ errors <- keepErrStats(errors, qdaFit)
 qdaCovFit <- doFit(training, fullFormula, "QdaCov")
 errors <- keepErrStats(errors, qdaCovFit)
 
+ans <- as.character(predict(qdaFit, newdata=testing))
+pml_write_files = function(x){
+    n = length(x)
+    for(i in 1:n){
+        filename = paste0("problem_id_",i,".txt")
+        write.table(x[i],file=filename,quote=FALSE,row.names=FALSE,col.names=FALSE)
+    }
+}
+pml_write_files(ans)
 ```
 
 
