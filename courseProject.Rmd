@@ -52,14 +52,17 @@ From the four methods in the study, the quadratic discriminant analysis ("qda") 
 
 The "qda" method gave an accuracy of $89.3\%$. A prediction using this method should be $\approx 90\%$ accurate. In other words, the expected out of sample error is roughly $10\%$ with this method.
 
+In fact, with the "pml-testing.csv" set, the accuracy was $95\%$.
+
 ```{r, echo=FALSE, message=FALSE}
 errors[errors$nFeature==52,]
 ```
 
-(NB: the "rpart" method reported three Accuracy numbers from its recursive run. The best number should be used as the final result.)
+NB: the "rpart" method reported three Accuracy numbers from its recursive run. The best number should be used as the final result. Also, disappointingly in this study the robust qda method "QdaCov" performed worse than "qda", and even "lda".
 
 ```{r, echo=FALSE, message=FALSE}
 library(ggplot2)
+errors <- read.csv("./errors.csv")
 g <- ( ggplot(errors[errors$nFeature==52,], aes(Method, Accuracy)) 
        + geom_point(size=5)
        + ggtitle("Fig 1: Expected Out of Sample Error\n(based on cross validation analysis)")); g
